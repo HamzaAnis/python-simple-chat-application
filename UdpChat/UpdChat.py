@@ -1,11 +1,20 @@
 import logging
 from logging.config import fileConfig
-import Server
 from os import path
 import os
 import sys
+class Server(object):
+    """docstring for Server."""
+    def __init__(self, port):
+        super(Server, self).__init__()
+        self.port=port
+        print("Server started")
 
 
+    def start_server(self):
+        print("Server started")
+        
+        
 class UdpChat(object):
     """docstring for UdpChat."""
 
@@ -23,6 +32,7 @@ class UdpChat(object):
             logging.info("Client Called")
         elif (mode == "-s"):
             logging.info("Server Called")
+            self.instance=Server(port)
 
 
 if __name__ == "__main__":
