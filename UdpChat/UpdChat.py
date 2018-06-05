@@ -18,7 +18,8 @@ class Server(object):
         logging.info("Server started")
         while True:
             message, address = self.server_socket.recvfrom(1024)
-            logging.info(message) 
+            logging.info(message)
+            self.server_socket.sendto("Welcome, You are registered.".encode(),address)
    
 
 class Client(object):
@@ -34,9 +35,15 @@ class Client(object):
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.client_socket.settimeout(1.0)
         self.addr = (self.server_ip, int(self.server_port))
+        self.do_registration()
+        
+    def do_registration(self):
         reg=self.nick_name+" "+self.client_port+" "+self.server_ip+" "+self.server_port
         self.client_socket.sendto(reg, self.addr)
         logging.info("Client reg send")
+        data, server = self.client_socket.recvfrom(1024)
+        print(str(data))
+        logging.info("Welcome message received")
 
 
 class UdpChat(object):
