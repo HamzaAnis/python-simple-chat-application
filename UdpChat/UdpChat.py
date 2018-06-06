@@ -74,7 +74,7 @@ class Server(object):
         broadcast_socket.sendto(self.table_to_string().encode(), b_addr)
 
     def table_to_string(self):
-        send = ""
+        send = "table "
         for v in self.client_table:
             send = send + v[0] + " " + v[1] + " " + \
                 v[2] + " " + v[3] + " " + v[4] + "\n"
@@ -95,7 +95,7 @@ class Client(object):
     def start(self):
         self.broadcast_thread = threading.Thread(
             group=None,
-            target=self.client_table_broadcast_service,
+            target=self.client_table_broadcast_message_service,
             name="Broadcast Service")
         # starting broadcast thread to recieve client table from server
         self.broadcast_thread.start()
@@ -119,7 +119,7 @@ class Client(object):
         for i in range(len(self.client_table)-1):
             v = self.client_table[i]
             line = "{:^10} {:^20} {:^10} {:^10}".format(v[0], v[2], v[1], v[4])
-            cprint (str(line), "red")
+            cprint(str(line), "red")
 
     def client_actions(self):
         while(1):
@@ -138,52 +138,73 @@ class Client(object):
             elif choice == "dereg":
                 self.perform_dereg(command)
 
-    def handle_message_sending(self,command):
+    def handle_message_sending(self, command):
         logging.info("Sending message "+command[4:])
         send_name = command.split(" ")[1]
-        logging.info("username is ")
+        logging.info("Username is ")
         logging.info(send_name)
-        message=command[len(send_name)+6:]
+        message = "mesage"+command[len(send_name)+6:]
         logging.info("Sending message |"+message+"|")
         for i in range(len(self.client_table)):
             logging.info(str(i)+" i")
             v = self.client_table[i]
             if(v[0] == send_name):
                 logging.info("User found and it's port: "+v[1])
-    def perform_dereg(self,command):
+                addr = ("127.0.0.1", int(v[1]))
+                message_client_socket = socket.socket(
+                    socket.AF_INET, socket.SOCK_DGRAM)
+                message_client_socket.settimeout(0.5)
+                message_client_socket.sendto(message.encode(), addr)
+                try:
+                    ack, user = message_client_socket.recvfrom(1024)
+                    cprint("["+ack.decode("utf-8")+"]", "green")
+                    logging.info("Message received")
+                except socket.timeout:
+                    cprint("[No ACK from "+send_name +
+                           ", message sent to server]", "green")
+                    logging.info("Message not received")
+
+    def perform_dereg(self, command):
         logging.info("Deregging inititate")
         dereg_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         dereg_client_socket.settimeout(0.5)
         dereg_client_socket.sendto(command.encode(), self.addr)
-        retry=0
-        while(retry<5):
+        retry = 0
+        while(retry < 5):
             try:
                 data, server = dereg_client_socket.recvfrom(1024)
                 cprint(data.decode("utf-8"), "green")
                 return None
             except socket.timeout:
                 logging.info(str(retry)+": ACK not received on registration")
-                retry=retry+1
-        cprint("[Server not responding]\n[Exiting]","red")
+                retry = retry+1
+        cprint("[Server not responding]\n[Exiting]", "red")
         os._exit(1)
-    def client_table_broadcast_service(self):
-        """This method starts another socket on which it receives the update client table
+
+    def client_table_broadcast_message_service(self):
+        """This method starts another socket on which it receives the update client table. Also it handles the messages
         """
 
-        logging.info("Client table service started at " + self.client_port)
+        logging.info(
+            "Client table service and message started at " + self.client_port)
         self.broadcast_socket = socket.socket(socket.AF_INET,
                                               socket.SOCK_DGRAM)
         self.broadcast_socket.bind(('', int(self.client_port)))
         while True:
             message, address = self.broadcast_socket.recvfrom(1024)
-            print("[Client table received]\n")
-            logging.info("Client table service received at " +
-                         self.client_port)
-            self.update_client_table(message.decode("utf-8"))
-
+            message_str = message.decode("utf-8")
+            header = message_str[:6]
+            logging.info("Header tag: "+header+"|")
+            if(header == "table "):
+                print("[Client table received]\n")
+                logging.info(
+                    "Client table service received at " + self.client_port)
+                self.update_client_table(message_str[6:])
+            elif(header=="mesage"):
+                logging.info("Message received: "+message_str[6:])
     def update_client_table(self, table):
         logging.info("Table string is")
-        logging.info(table)
+        logging.info(table+"|")
         # clearing the list
         self.client_table[:] = []
         client_line = table.split("\n")
