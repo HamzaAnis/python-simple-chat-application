@@ -7,6 +7,7 @@ import socket
 import threading
 from termcolor import cprint
 from time import sleep
+import datetime
 
 
 class Server(object):
@@ -41,16 +42,14 @@ class Server(object):
                 self.server_socket.sendto(
                     "You are online. Welcome again.".encode(), address)
 
-
-    def check_already_exist(self,username):
+    def check_already_exist(self, username):
         for i in range(len(self.client_table)):
             v = self.client_table[i]
             if(v[0] == username):
                 return True
 
         return False
-        
-        
+
     def start(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.server_socket.bind(('', int(self.port)))
@@ -69,22 +68,31 @@ class Server(object):
                 self.handle_reg(to_do[1], address)
                 continue
             elif to_do[0] == "savem":
-                logging.info("Offline message received "+message.decode("utf-8"))
+                logging.info("Offline message received " +
+                             message.decode("utf-8"))
                 if(self.check_offline_status(to_do[1])):
-                    self.server_socket.sendto("Message received by the server and saved".encode(),address)
+                    self.server_socket.sendto(
+                        "Message received by the server and saved".encode(), address)
+                    mesage_body_after_header=message.decode("utf-8")[len(to_do[1])+len("savem")+2:]
+                    logging.info("Message body is "+mesage_body_after_header)
+
+                    self.handle_offline_message(
+                        to_do[1], mesage_body_after_header)
                 else:
-                    self.server_socket.sendto("Client "+to_do[1]+" exists!!".encode(),address)
-                    self.client_table_broadcast()        
+                    exist_message= "Client "+to_do[1]+" exists!!"
+                    self.server_socket.sendto(
+                       exist_message.encode(), address)
+                    self.client_table_broadcast()
                 continue
-            
+
             # client information received from client
             client_data = message.decode("utf-8").split(" ")
             client_data.append("ONLINE")
-            
+
             # Check if the user do not already exists
             if(not self.check_already_exist(client_data[0])):
                 self.server_socket.sendto("Welcome, You are registered.".encode(),
-                                        address)
+                                          address)
                 # appending to the client table
                 self.client_table.append(client_data)
                 logging.info("Client Port is " + client_data[1])
@@ -92,15 +100,22 @@ class Server(object):
                 self.client_table_broadcast()
             else:
                 self.server_socket.sendto("Sorry user is already registered.".encode(),
-                                        address)
+                                          address)
 
-    def check_offline_status(self,username):
+    def handle_offline_message(self, filename, message):
+        logging.info("Apending started")
+        with open(filename, "a") as myfile:
+            myfile.write(str(datetime.datetime.now())+"  "+message+"\n")
+        logging.info("File appended")
+
+    def check_offline_status(self, username):
         logging.info("Checking status for "+username)
         for v in self.client_table:
-            if(v[0]==username):
-                if(v[4]=="OFFLINE"):
-                    return true
-        return false
+            if(v[0] == username):
+                if(v[4] == "OFFLINE"):
+                    return True
+        return False
+
     def client_table_broadcast(self):
         for v in self.client_table:
             self.send_table_to_client(v[2], int(v[1]))
@@ -171,7 +186,7 @@ class Client(object):
     def client_actions(self):
         while(1):
             cprint(
-                "Multiple options available\n>>>> send <name> <message>\n>>>> list\n>>>> dereg <nick-name>\n", "red")
+                "Multiple options available\n>>>> send <name> <message>\n>>>> list\n>>>> dereg <nick-name> \n>>>>>deregA <any one>\n", "red")
             command = input()
             choice = command.split(" ")[0]
             logging.info("Choice is ")
@@ -184,6 +199,8 @@ class Client(object):
                 self.print_client_table()
             elif choice == "dereg":
                 self.perform_dereg(command)
+            elif choice == "deregA":
+                self.perform_deregon_all(command)
             elif choice == "reg":
                 self.perform_reg(command)
 
@@ -205,6 +222,7 @@ class Client(object):
         for i in range(len(self.client_table)):
             v = self.client_table[i]
             if(v[0] == send_name):
+                if(v[4] == "ONLINE"):
                     logging.info("User found and it's port: "+v[1])
                     addr = ("127.0.0.1", int(v[1]))
                     message_client_socket = socket.socket(
@@ -219,10 +237,12 @@ class Client(object):
                         cprint("[No ACK from "+send_name +
                                ", message sent to server]", "green")
                         logging.info("Message not received")
-                        logging.info("Offline message request to be sent!")
-                        send = "savem "+self.nick_name + \
-                            ": "+command[len(send_name)+6:]
-                        self.save_message_request(send)
+                else:
+                    logging.info("Offline message request to be sent!")
+                    send = "savem "+send_name+" "+self.nick_name +": "+command[len(send_name)+6:]
+                    self.save_message_request(send)
+
+                    
 
     def save_message_request(self, message):
         logging.info("Deregging inititate")
@@ -235,13 +255,34 @@ class Client(object):
         except socket.timeout:
             logging.info("ACK not received on saving offline message")
 
-    def perform_dereg(self, command):  
+    def perform_deregon_all(self, command):
+        username = command.lower().split(" ")[1]
+        logging.info("User is ")
+        logging.info(username)
+        logging.info("Deregging inititate")
+        dereg_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        dereg_client_socket.settimeout(0.5)
+        dereg_client_socket.sendto(command.lower().encode(), self.addr)
+        retry = 0
+        while(retry < 5):
+            try:
+                data, server = dereg_client_socket.recvfrom(1024)
+                cprint(data.decode("utf-8"), "green")
+                return None
+            except socket.timeout:
+                logging.info(str(retry)+": ACK not received on registration")
+                retry = retry+1
+            cprint("[Server not responding]\n[Exiting]", "red")
+            os._exit(1)
+
+    def perform_dereg(self, command):
         username = command.lower().split(" ")[1]
         logging.info("User is ")
         logging.info(username)
         if(username == self.nick_name):
             logging.info("Deregging inititate")
-            dereg_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            dereg_client_socket = socket.socket(
+                socket.AF_INET, socket.SOCK_DGRAM)
             dereg_client_socket.settimeout(0.5)
             dereg_client_socket.sendto(command.lower().encode(), self.addr)
             retry = 0
@@ -251,12 +292,14 @@ class Client(object):
                     cprint(data.decode("utf-8"), "green")
                     return None
                 except socket.timeout:
-                    logging.info(str(retry)+": ACK not received on registration")
+                    logging.info(
+                        str(retry)+": ACK not received on registration")
                     retry = retry+1
             cprint("[Server not responding]\n[Exiting]", "red")
             os._exit(1)
         else:
-            cprint("You can not de-register someone else.\n","red")
+            cprint("You can not de-register someone else.\n", "red")
+
     def client_table_broadcast_message_service(self):
         """This method starts another socket on which it receives the update client table. Also it handles the messages
         """
@@ -314,10 +357,10 @@ class Client(object):
         self.client_socket.sendto(reg.encode(), self.addr)
         logging.info("Client reg send")
         data, server = self.client_socket.recvfrom(1024)
-        data_str=data.decode("utf-8")
-        if(data_str=="Sorry user is already registered."):
-            cprint(data_str,"red")
-            os._exit(1)    
+        data_str = data.decode("utf-8")
+        if(data_str == "Sorry user is already registered."):
+            cprint(data_str, "red")
+            os._exit(1)
         logging.info("[First message received]")
 
 
