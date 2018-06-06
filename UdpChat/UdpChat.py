@@ -52,14 +52,16 @@ class Server(object):
             logging.info(request)
             to_do = request.split(" ")
             logging.info("To do is ")
-            logging.info(to_do[0])
+            logging.info(to_do[0]+"|")
             if to_do[0] == "dereg":
                 self.handle_dereg(to_do[1], address)
                 continue
-            if to_do[0] == "reg":
+            elif to_do[0] == "reg":
                 self.handle_reg(to_do[1], address)
                 continue
-
+            elif to_do[0] == "savem":
+                logging.info("Offline message received "+message.decode("utf-8"))
+                continue
             self.server_socket.sendto("Welcome, You are registered.".encode(),
                                       address)
             # client information received from client
@@ -164,7 +166,7 @@ class Client(object):
         data, server = reg_client_socket.recvfrom(1024)
         cprint(data.decode("utf-8"), "green")
         logging.info("reg again")
-        
+
     def handle_message_sending(self, command):
         logging.info("Sending message "+command[4:])
         send_name = command.split(" ")[1]
@@ -192,7 +194,20 @@ class Client(object):
                         logging.info("Message not received")
                 else:
                     logging.info("Offline message request to be sent!")
-                    # self.perform_reg(send_name)
+                    send = "savem "+self.nick_name + \
+                        ": "+command[len(send_name)+6:]
+                    self.save_message_request(send)
+
+    def save_message_request(self, message):
+        logging.info("Deregging inititate")
+        save_message_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        save_message_socket.settimeout(0.5)
+        save_message_socket.sendto(message.encode(), self.addr)
+        try:
+            ack, server = save_message_socket.recvfrom(1024)
+            cprint(ack.decode("utf-8"), "green")
+        except socket.timeout:
+            logging.info("ACK not received on saving offline message")
 
     def perform_dereg(self, command):
         logging.info("Deregging inititate")
