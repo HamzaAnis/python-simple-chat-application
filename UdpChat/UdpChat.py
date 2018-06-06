@@ -157,7 +157,7 @@ class Client(object):
                 message_client_socket.sendto(message.encode(), addr)
                 try:
                     ack, user = message_client_socket.recvfrom(1024)
-                    cprint("["+ack.decode("utf-8")+"]", "green")
+                    cprint(ack.decode("utf-8"), "green")
                     logging.info("Message received")
                 except socket.timeout:
                     cprint("[No ACK from "+send_name +
@@ -192,6 +192,8 @@ class Client(object):
         self.broadcast_socket.bind(('', int(self.client_port)))
         while True:
             message, address = self.broadcast_socket.recvfrom(1024)
+            ack="[Message received by "+self.nick_name+"]"
+            self.broadcast_socket.sendto(ack.encode(),address)
             message_str = message.decode("utf-8")
 
             header = message_str[:6]
