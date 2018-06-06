@@ -6,7 +6,7 @@ import sys
 import socket
 import threading
 from termcolor import cprint
-
+from time import sleep
 
 class Server(object):
     """docstring for Server."""
@@ -16,16 +16,18 @@ class Server(object):
         self.port = port
         self.client_table = []
 
-    def handle_deref(self,username,address):
+    def handle_deref(self, username, address):
         logging.info("Deregging received for "+username+"|")
-        for i in range (len(self.client_table)):
+        for i in range(len(self.client_table)):
             logging.info(str(i)+" i")
-            v=self.client_table[i]
-            if(v[0]==username):
-                v[4]="OFFLINE"
+            v = self.client_table[i]
+            if(v[0] == username):
+                v[4] = "OFFLINE"
                 logging.info("User found and deleted it")
                 self.client_table_broadcast()
-                self.server_socket.sendto("You are Offline. Bye.".encode(),address)
+                # sleep(1.0)
+                self.server_socket.sendto(
+                    "You are Offline. Bye.".encode(), address)
 
     def start(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -39,7 +41,7 @@ class Server(object):
             logging.info("To do is ")
             logging.info(to_do[0])
             if to_do[0] == "dereg":
-                self.handle_deref(to_do[1],address)
+                self.handle_deref(to_do[1], address)
                 continue
             self.server_socket.sendto("Welcome, You are registered.".encode(),
                                       address)
@@ -133,12 +135,13 @@ class Client(object):
                 self.print_client_table()
             elif choice == "dereg":
                 logging.info("Deregging inititate")
-                dereg_client_socket=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                dereg_client_socket = socket.socket(
+                    socket.AF_INET, socket.SOCK_DGRAM)
                 dereg_client_socket.settimeout(0.5)
                 dereg_client_socket.sendto(command.encode(), self.addr)
                 try:
-                    data,server=dereg_client_socket.recvfrom(1024)
-                    cprint(data.decode("utf-8"),"green")
+                    data, server = dereg_client_socket.recvfrom(1024)
+                    cprint(data.decode("utf-8"), "green")
                 except socket.timeout:
                     logging.info("ACK not received on registration")
 
