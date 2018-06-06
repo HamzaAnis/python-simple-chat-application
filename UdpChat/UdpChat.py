@@ -8,6 +8,7 @@ import threading
 from termcolor import cprint
 from time import sleep
 
+
 class Server(object):
     """docstring for Server."""
 
@@ -134,16 +135,18 @@ class Client(object):
                 logging.info("Listing table")
                 self.print_client_table()
             elif choice == "dereg":
-                logging.info("Deregging inititate")
-                dereg_client_socket = socket.socket(
-                    socket.AF_INET, socket.SOCK_DGRAM)
-                dereg_client_socket.settimeout(0.5)
-                dereg_client_socket.sendto(command.encode(), self.addr)
-                try:
-                    data, server = dereg_client_socket.recvfrom(1024)
-                    cprint(data.decode("utf-8"), "green")
-                except socket.timeout:
-                    logging.info("ACK not received on registration")
+                self.perform_dereg()
+
+    def perform_dereg(self):
+        logging.info("Deregging inititate")
+        dereg_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        dereg_client_socket.settimeout(0.5)
+        dereg_client_socket.sendto(command.encode(), self.addr)
+        try:
+            data, server = dereg_client_socket.recvfrom(1024)
+            cprint(data.decode("utf-8"), "green")
+        except socket.timeout:
+            logging.info("ACK not received on registration")
 
     def client_table_broadcast_service(self):
         """This method starts another socket on which it receives the update client table
