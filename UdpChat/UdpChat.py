@@ -16,8 +16,16 @@ class Server(object):
         self.port = port
         self.client_table = []
 
-    def handle_deref(self):
-        logging.info("Deregging received")
+    def handle_deref(self,username):
+        logging.info("Deregging received for "+username+"|")
+        for i in range (len(self.client_table)):
+            logging.info(str(i)+" i")
+            v=self.client_table[i]
+            if(v[0]==username):
+                v[4]="OFFLINE"
+                logging.info("User found and deleted it")
+                self.client_table_broadcast()
+                
 
     def start(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -27,17 +35,17 @@ class Server(object):
             message, address = self.server_socket.recvfrom(1024)
             request = message.decode("utf-8")
             logging.info(request)
-            to_do = request.split(" ")[0]
+            to_do = request.split(" ")
             logging.info("To do is ")
-            logging.info(to_do)
-            if to_do == "dereg":
-                self.handle_deref()
+            logging.info(to_do[0])
+            if to_do[0] == "dereg":
+                self.handle_deref(to_do[1])
                 continue
             self.server_socket.sendto("Welcome, You are registered.".encode(),
                                       address)
             # client information received from client
             client_data = message.decode("utf-8").split(" ")
-            client_data.append("Online")
+            client_data.append("ONLINE")
             # appending to the client table
             self.client_table.append(client_data)
             logging.info("Client Port is " + client_data[1])
