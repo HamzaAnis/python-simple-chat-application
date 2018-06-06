@@ -39,8 +39,11 @@ class Server(object):
                 logging.info("User found and registered it")
                 self.client_table_broadcast()
                 # sleep(5.0)
-                self.server_socket.sendto(
-                    "You are online. Welcome again.".encode(), address)
+                delayed_messages=self.get_file_messages(username)
+                self.server_socket.sendto(delayed_messages.encode(),address)
+                logging.info("offline message sent back that are "+delayed_messages)
+                # self.server_socket.sendto(
+                #     "You are online. Welcome again.".encode(), address)
 
     def check_already_exist(self, username):
         for i in range(len(self.client_table)):
@@ -107,6 +110,20 @@ class Server(object):
         with open(filename, "a") as myfile:
             myfile.write(str(datetime.datetime.now())+"  "+message+"\n")
         logging.info("File appended")
+
+    def get_file_messages(self,username):
+        if(os.path.exists(username)):
+            logging.info(username+" exists")
+            file=open(username,"r")
+            lines=file.readlines()
+            content=""
+            for V in lines:
+                content=content+V+"\n"
+            os.remove(username)
+            return content
+        else:
+            logging.info(username+" do not exists")
+        
 
     def check_offline_status(self, username):
         logging.info("Checking status for "+username)
