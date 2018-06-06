@@ -135,9 +135,9 @@ class Client(object):
                 logging.info("Listing table")
                 self.print_client_table()
             elif choice == "dereg":
-                self.perform_dereg()
+                self.perform_dereg(command)
 
-    def perform_dereg(self):
+    def perform_dereg(self,command):
         logging.info("Deregging inititate")
         dereg_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         dereg_client_socket.settimeout(0.5)
