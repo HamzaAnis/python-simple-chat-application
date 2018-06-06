@@ -26,7 +26,7 @@ class Server(object):
                 v[4] = "OFFLINE"
                 logging.info("User found and deleted it")
                 self.client_table_broadcast()
-                sleep(5.0)
+                # sleep(5.0)
                 self.server_socket.sendto(
                     "You are Offline. Bye.".encode(), address)
 
@@ -118,8 +118,8 @@ class Client(object):
         logging.info(len(self.client_table))
         for i in range(len(self.client_table)-1):
             v = self.client_table[i]
-            line = "{:^10} {:^20} {:^10} {:^10}".format(v[0], v[1], v[2], v[4])
-            cprint(str(line), "red")
+            line = "{:^10} {:^20} {:^10} {:^10}".format(v[0], v[2], v[1], v[4])
+            cprint (str(line), "red")
 
     def client_actions(self):
         while(1):
@@ -131,12 +131,25 @@ class Client(object):
             logging.info(choice)
             if(choice == "send"):
                 logging.info("Sending to the client")
+                self.handle_message_sending(command)
             elif(choice == "list"):
                 logging.info("Listing table")
                 self.print_client_table()
             elif choice == "dereg":
                 self.perform_dereg(command)
 
+    def handle_message_sending(self,command):
+        logging.info("Sending message "+command[4:])
+        send_name = command.split(" ")[1]
+        logging.info("username is ")
+        logging.info(send_name)
+        message=command[len(send_name)+6:]
+        logging.info("Sending message |"+message+"|")
+        for i in range(len(self.client_table)):
+            logging.info(str(i)+" i")
+            v = self.client_table[i]
+            if(v[0] == send_name):
+                logging.info("User found and it's port: "+v[1])
     def perform_dereg(self,command):
         logging.info("Deregging inititate")
         dereg_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
