@@ -27,6 +27,7 @@ class Server(object):
                                       address)
             # client information received from client
             client_data = message.decode("utf-8").split(" ")
+            client_data.append("Online")
             # appending to the client table
             self.client_table.append(client_data)
             logging.info("Client Port is " + client_data[1])
@@ -54,7 +55,7 @@ class Server(object):
     def table_to_string(self):
         send = ""
         for v in self.client_table:
-            send = send + v[0] + " " + v[1] + " " + v[2] + " " + v[3] + "\n"
+            send = send + v[0] + " " + v[1] + " " + v[2] + " " + v[3] + " " + v[4] + "\n"
         return send
 
 
@@ -95,7 +96,7 @@ class Client(object):
         logging.info(len(self.client_table))
         for i in  range(len(self.client_table)-1):
             v=self.client_table[i]
-            line = "{:^10} {:^20} {:^10} {:^10}".format(v[0], v[1], v[2], v[3])
+            line = "{:^10} {:^20} {:^10} {:^10}".format(v[0], v[1], v[2], v[4])
             cprint(str(line), "red")
 
     def client_actions(self):
