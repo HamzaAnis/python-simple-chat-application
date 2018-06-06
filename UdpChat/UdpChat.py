@@ -16,7 +16,7 @@ class Server(object):
         self.port = port
         self.client_table = []
 
-    def handle_deref(self,username):
+    def handle_deref(self,username,address):
         logging.info("Deregging received for "+username+"|")
         for i in range (len(self.client_table)):
             logging.info(str(i)+" i")
@@ -25,7 +25,7 @@ class Server(object):
                 v[4]="OFFLINE"
                 logging.info("User found and deleted it")
                 self.client_table_broadcast()
-                
+                self.server_socket.sendto("You are Offline. Bye.".encode(),address)
 
     def start(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -39,7 +39,7 @@ class Server(object):
             logging.info("To do is ")
             logging.info(to_do[0])
             if to_do[0] == "dereg":
-                self.handle_deref(to_do[1])
+                self.handle_deref(to_do[1],address)
                 continue
             self.server_socket.sendto("Welcome, You are registered.".encode(),
                                       address)
@@ -133,7 +133,14 @@ class Client(object):
                 self.print_client_table()
             elif choice == "dereg":
                 logging.info("Deregging inititate")
-                self.client_socket.sendto(command.encode(), self.addr)
+                dereg_client_socket=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                dereg_client_socket.settimeout(0.5)
+                dereg_client_socket.sendto(command.encode(), self.addr)
+                try:
+                    data,server=dereg_client_socket.recvfrom(1024)
+                    cprint(data.decode("utf-8"),"green")
+                except socket.timeout:
+                    logging.info("ACK not received on registration")
 
     def client_table_broadcast_service(self):
         """This method starts another socket on which it receives the update client table
