@@ -16,13 +16,23 @@ class Server(object):
         self.port = port
         self.client_table = []
 
+    def handle_deref(self):
+        logging.info("Deregging received")
+
     def start(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.server_socket.bind(('', int(self.port)))
         logging.info("Server started")
         while True:
             message, address = self.server_socket.recvfrom(1024)
-            logging.info(message)
+            request = message.decode("utf-8")
+            logging.info(request)
+            to_do = request.split(" ")[0]
+            logging.info("To do is ")
+            logging.info(to_do)
+            if to_do == "dereg":
+                self.handle_deref()
+                continue
             self.server_socket.sendto("Welcome, You are registered.".encode(),
                                       address)
             # client information received from client
@@ -55,7 +65,8 @@ class Server(object):
     def table_to_string(self):
         send = ""
         for v in self.client_table:
-            send = send + v[0] + " " + v[1] + " " + v[2] + " " + v[3] + " " + v[4] + "\n"
+            send = send + v[0] + " " + v[1] + " " + \
+                v[2] + " " + v[3] + " " + v[4] + "\n"
         return send
 
 
@@ -94,8 +105,8 @@ class Client(object):
             'NAME', 'IP', 'PORT', 'STATUS')
         cprint(header, "red")
         logging.info(len(self.client_table))
-        for i in  range(len(self.client_table)-1):
-            v=self.client_table[i]
+        for i in range(len(self.client_table)-1):
+            v = self.client_table[i]
             line = "{:^10} {:^20} {:^10} {:^10}".format(v[0], v[1], v[2], v[4])
             cprint(str(line), "red")
 
@@ -114,6 +125,7 @@ class Client(object):
                 self.print_client_table()
             elif choice == "dereg":
                 logging.info("Deregging inititate")
+                self.client_socket.sendto(command.encode(), self.addr)
 
     def client_table_broadcast_service(self):
         """This method starts another socket on which it receives the update client table
