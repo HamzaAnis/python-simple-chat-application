@@ -30,10 +30,13 @@ class Server(object):
             self.client_table.append(client_data)
             logging.info("Client Port is " + client_data[1])
             logging.info(client_data)
-            self.client_table_broadcast_service(client_data[2],
-                                                int(client_data[1]))
+            self.client_table_broadcast()
 
-    def client_table_broadcast_service(self, client_ip, client_port):
+    def client_table_broadcast(self):
+        for v in self.client_table:
+            self.send_table_to_client(v[2], int(v[1]))
+
+    def send_table_to_client(self, client_ip, client_port):
         """To send the client table on the client's port
         
         Arguments:
@@ -45,12 +48,14 @@ class Server(object):
         b_addr = (client_ip, client_port)
         logging.info("Sent to " + client_ip + "  " + str(client_port))
         broadcast_socket.sendto(self.table_to_string().encode(), b_addr)
-    
+
     def table_to_string(self):
-        send=""
+        send = ""
         for v in self.client_table:
-            send=send+v[0]+" "+v[1]+" "+v[2]+" "+v[3]+"\n"
+            send = send + v[0] + " " + v[1] + " " + v[2] + " " + v[3] + "\n"
         return send
+
+
 class Client(object):
     """docstring for Client."""
 
