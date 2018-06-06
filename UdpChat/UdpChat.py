@@ -17,18 +17,30 @@ class Server(object):
         self.port = port
         self.client_table = []
 
-    def handle_deref(self, username, address):
+    def handle_dereg(self, username, address):
         logging.info("Deregging received for "+username+"|")
         for i in range(len(self.client_table)):
             logging.info(str(i)+" i")
             v = self.client_table[i]
             if(v[0] == username):
                 v[4] = "OFFLINE"
-                logging.info("User found and deleted it")
+                logging.info("User found and unregisterded it")
                 self.client_table_broadcast()
                 # sleep(5.0)
                 self.server_socket.sendto(
                     "You are Offline. Bye.".encode(), address)
+
+    def handle_reg(self, username, address):
+        logging.info("Regging received for "+username+"|")
+        for i in range(len(self.client_table)):
+            v = self.client_table[i]
+            if(v[0] == username):
+                v[4] = "ONLINE"
+                logging.info("User found and registered it")
+                self.client_table_broadcast()
+                # sleep(5.0)
+                self.server_socket.sendto(
+                    "You are online. Welcome again.".encode(), address)
 
     def start(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -42,8 +54,12 @@ class Server(object):
             logging.info("To do is ")
             logging.info(to_do[0])
             if to_do[0] == "dereg":
-                self.handle_deref(to_do[1], address)
+                self.handle_dereg(to_do[1], address)
                 continue
+            if to_do[0] == "reg":
+                self.handle_reg(to_do[1], address)
+                continue
+
             self.server_socket.sendto("Welcome, You are registered.".encode(),
                                       address)
             # client information received from client
@@ -74,6 +90,7 @@ class Server(object):
         broadcast_socket.sendto(self.table_to_string().encode(), b_addr)
 
     def table_to_string(self):
+        logging.info("Sending table")
         send = "table "
         for v in self.client_table:
             send = send + v[0] + " " + v[1] + " " + \
@@ -138,37 +155,26 @@ class Client(object):
             elif choice == "dereg":
                 self.perform_dereg(command)
             elif choice == "reg":
-                pass
-                # perform_reg(command)
+                self.perform_reg(command)
 
-    # def perform_reg(self, command):
-    #     logging.info("Regging inititate")
-    #     reg_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    #     reg_client_socket.settimeout(0.5)
-    #     reg_client_socket.sendto(command.encode(), self.addr)
-    #     retry = 0
-    #     while(retry < 5):
-    #         try:
-    #             data, server = dereg_client_socket.recvfrom(1024)
-    #             cprint(data.decode("utf-8"), "green")
-    #             return None
-    #         except socket.timeout:
-    #             logging.info(str(retry)+": ACK not received on registration")
-    #             retry = retry+1
-    #     cprint("[Server not responding]\n[Exiting]", "red")
-    #     os._exit(1)
-
+    def perform_reg(self, command):
+        logging.info("Regging inititate")
+        reg_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        reg_client_socket.sendto(command.encode(), self.addr)
+        data, server = reg_client_socket.recvfrom(1024)
+        cprint(data.decode("utf-8"), "green")
+        logging.info("reg again")
+        
     def handle_message_sending(self, command):
         logging.info("Sending message "+command[4:])
         send_name = command.split(" ")[1]
         logging.info("Username is ")
         logging.info(send_name)
-        message = "msage "+self.nick_name+" "+command[len(send_name)+6:]
+        message = "msage "+self.nick_name+": "+command[len(send_name)+6:]
         logging.info("Sending message |"+message+"|")
         for i in range(len(self.client_table)):
-            logging.info(str(i)+" i")
             v = self.client_table[i]
-            if(v[0] == send_name ):
+            if(v[0] == send_name):
                 if(v[4] == "ONLINE"):
                     logging.info("User found and it's port: "+v[1])
                     addr = ("127.0.0.1", int(v[1]))
@@ -182,11 +188,11 @@ class Client(object):
                         logging.info("Message received")
                     except socket.timeout:
                         cprint("[No ACK from "+send_name +
-                            ", message sent to server]", "green")
+                               ", message sent to server]", "green")
                         logging.info("Message not received")
                 else:
                     logging.info("Offline message request to be sent!")
-                
+                    # self.perform_reg(send_name)
 
     def perform_dereg(self, command):
         logging.info("Deregging inititate")
@@ -228,14 +234,17 @@ class Client(object):
                     "Client table service received at " + self.client_port)
                 self.update_client_table(message_str[6:])
             elif(header == "msage "):
-                sender_name = message_str.split(" ")[1]
-                logging.info("Sender is ")
-                logging.info(sender_name)
-                message_rsv = message_str[6+len(sender_name):]
+                # sender_name = message_str.split(" ")[1]
+                # logging.info("Sender is ")
+                # logging.info(sender_name)
+                # message_rsv = message_str[6+len(sender_name):]
                 logging.info(
-                    "Message received after the header is "+message_rsv)
-                logging.info("Message received: "+message_rsv)
-                cprint(sender_name+" : "+message_rsv, "green")
+                    "Message received after the header is "+message_str[6:])
+                cprint(message_str[6:], "green")
+            elif(header == "headr "):
+                logging.info("Offline message received")
+                detail = message_str[6:]
+                logging.info(detail)
 
     def update_client_table(self, table):
         logging.info("Table string is")
