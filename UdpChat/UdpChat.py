@@ -236,6 +236,7 @@ class Client(object):
         logging.info(send_name)
         message = "msage "+self.nick_name+": "+command[len(send_name)+6:]
         logging.info("Sending message |"+message+"|")
+        send = "savem "+send_name+" "+self.nick_name +": "+command[len(send_name)+6:]
         for i in range(len(self.client_table)):
             v = self.client_table[i]
             if(v[0] == send_name):
@@ -253,24 +254,31 @@ class Client(object):
                     except socket.timeout:
                         cprint("[No ACK from "+send_name +
                                ", message sent to server]", "green")
-                        logging.info("Message not received")
+                        logging.info("Message not received when the client is closed")
+                        self.save_message_request(send)
                 else:
                     logging.info("Offline message request to be sent!")
-                    send = "savem "+send_name+" "+self.nick_name +": "+command[len(send_name)+6:]
                     self.save_message_request(send)
 
                     
+
 
     def save_message_request(self, message):
         logging.info("Deregging inititate")
         save_message_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         save_message_socket.settimeout(0.5)
         save_message_socket.sendto(message.encode(), self.addr)
-        try:
-            ack, server = save_message_socket.recvfrom(1024)
-            cprint(ack.decode("utf-8"), "green")
-        except socket.timeout:
-            logging.info("ACK not received on saving offline message")
+        retry = 0
+        while(retry < 5):
+            try:
+                ack, server = save_message_socket.recvfrom(1024)
+                cprint(ack.decode("utf-8"), "green")
+                return None
+            except socket.timeout:
+                logging.info("ACK not received on saving offline message")
+                retry=retry+1
+        cprint("[Server not responding]\n[Exiting]", "red")
+        os._exit()
 
     def perform_deregon_all(self, command):
         username = command.lower().split(" ")[1]
