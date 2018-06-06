@@ -137,6 +137,26 @@ class Client(object):
                 self.print_client_table()
             elif choice == "dereg":
                 self.perform_dereg(command)
+            elif choice == "reg":
+                pass
+                # perform_reg(command)
+
+    # def perform_reg(self, command):
+    #     logging.info("Regging inititate")
+    #     reg_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    #     reg_client_socket.settimeout(0.5)
+    #     reg_client_socket.sendto(command.encode(), self.addr)
+    #     retry = 0
+    #     while(retry < 5):
+    #         try:
+    #             data, server = dereg_client_socket.recvfrom(1024)
+    #             cprint(data.decode("utf-8"), "green")
+    #             return None
+    #         except socket.timeout:
+    #             logging.info(str(retry)+": ACK not received on registration")
+    #             retry = retry+1
+    #     cprint("[Server not responding]\n[Exiting]", "red")
+    #     os._exit(1)
 
     def handle_message_sending(self, command):
         logging.info("Sending message "+command[4:])
@@ -148,21 +168,25 @@ class Client(object):
         for i in range(len(self.client_table)):
             logging.info(str(i)+" i")
             v = self.client_table[i]
-            if(v[0] == send_name):
-                logging.info("User found and it's port: "+v[1])
-                addr = ("127.0.0.1", int(v[1]))
-                message_client_socket = socket.socket(
-                    socket.AF_INET, socket.SOCK_DGRAM)
-                message_client_socket.settimeout(0.5)
-                message_client_socket.sendto(message.encode(), addr)
-                try:
-                    ack, user = message_client_socket.recvfrom(1024)
-                    cprint(ack.decode("utf-8"), "green")
-                    logging.info("Message received")
-                except socket.timeout:
-                    cprint("[No ACK from "+send_name +
-                           ", message sent to server]", "green")
-                    logging.info("Message not received")
+            if(v[0] == send_name ):
+                if(v[4] == "ONLINE"):
+                    logging.info("User found and it's port: "+v[1])
+                    addr = ("127.0.0.1", int(v[1]))
+                    message_client_socket = socket.socket(
+                        socket.AF_INET, socket.SOCK_DGRAM)
+                    message_client_socket.settimeout(0.5)
+                    message_client_socket.sendto(message.encode(), addr)
+                    try:
+                        ack, user = message_client_socket.recvfrom(1024)
+                        cprint(ack.decode("utf-8"), "green")
+                        logging.info("Message received")
+                    except socket.timeout:
+                        cprint("[No ACK from "+send_name +
+                            ", message sent to server]", "green")
+                        logging.info("Message not received")
+                else:
+                    logging.info("Offline message request to be sent!")
+                
 
     def perform_dereg(self, command):
         logging.info("Deregging inititate")
@@ -192,8 +216,8 @@ class Client(object):
         self.broadcast_socket.bind(('', int(self.client_port)))
         while True:
             message, address = self.broadcast_socket.recvfrom(1024)
-            ack="[Message received by "+self.nick_name+"]"
-            self.broadcast_socket.sendto(ack.encode(),address)
+            ack = "[Message received by "+self.nick_name+"]"
+            self.broadcast_socket.sendto(ack.encode(), address)
             message_str = message.decode("utf-8")
 
             header = message_str[:6]
