@@ -143,7 +143,7 @@ class Client(object):
         send_name = command.split(" ")[1]
         logging.info("Username is ")
         logging.info(send_name)
-        message = "mesage"+command[len(send_name)+6:]
+        message = "msage "+self.nick_name+" "+command[len(send_name)+6:]
         logging.info("Sending message |"+message+"|")
         for i in range(len(self.client_table)):
             logging.info(str(i)+" i")
@@ -193,6 +193,7 @@ class Client(object):
         while True:
             message, address = self.broadcast_socket.recvfrom(1024)
             message_str = message.decode("utf-8")
+
             header = message_str[:6]
             logging.info("Header tag: "+header+"|")
             if(header == "table "):
@@ -200,8 +201,16 @@ class Client(object):
                 logging.info(
                     "Client table service received at " + self.client_port)
                 self.update_client_table(message_str[6:])
-            elif(header=="mesage"):
-                logging.info("Message received: "+message_str[6:])
+            elif(header == "msage "):
+                sender_name = message_str.split(" ")[1]
+                logging.info("Sender is ")
+                logging.info(sender_name)
+                message_rsv = message_str[6+len(sender_name):]
+                logging.info(
+                    "Message received after the header is "+message_rsv)
+                logging.info("Message received: "+message_rsv)
+                cprint(sender_name+" : "+message_rsv, "green")
+
     def update_client_table(self, table):
         logging.info("Table string is")
         logging.info(table+"|")
