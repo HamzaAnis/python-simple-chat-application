@@ -26,7 +26,7 @@ class Server(object):
                 v[4] = "OFFLINE"
                 logging.info("User found and deleted it")
                 self.client_table_broadcast()
-                # sleep(1.0)
+                sleep(5.0)
                 self.server_socket.sendto(
                     "You are Offline. Bye.".encode(), address)
 
@@ -142,12 +142,17 @@ class Client(object):
         dereg_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         dereg_client_socket.settimeout(0.5)
         dereg_client_socket.sendto(command.encode(), self.addr)
-        try:
-            data, server = dereg_client_socket.recvfrom(1024)
-            cprint(data.decode("utf-8"), "green")
-        except socket.timeout:
-            logging.info("ACK not received on registration")
-
+        retry=0
+        while(retry<5):
+            try:
+                data, server = dereg_client_socket.recvfrom(1024)
+                cprint(data.decode("utf-8"), "green")
+                return None
+            except socket.timeout:
+                logging.info(str(retry)+": ACK not received on registration")
+                retry=retry+1
+        cprint("[Server not responding]\n[Exiting]","red")
+        os._exit(1)
     def client_table_broadcast_service(self):
         """This method starts another socket on which it receives the update client table
         """
