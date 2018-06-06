@@ -7,6 +7,7 @@ import socket
 import threading
 from termcolor import cprint
 
+
 class Server(object):
     """docstring for Server."""
 
@@ -25,7 +26,7 @@ class Server(object):
             self.server_socket.sendto("Welcome, You are registered.".encode(),
                                       address)
             # client information received from client
-            client_data = str(message).split(" ")
+            client_data = message.decode("utf-8").split(" ")
             # appending to the client table
             self.client_table.append(client_data)
             logging.info("Client Port is " + client_data[1])
@@ -38,7 +39,7 @@ class Server(object):
 
     def send_table_to_client(self, client_ip, client_port):
         """To send the client table on the client's port
-        
+
         Arguments:
             client_ip {[str]} -- [Client Ip]
             client_port {[int]} -- [Client Port]
@@ -47,6 +48,7 @@ class Server(object):
         broadcast_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         b_addr = (client_ip, client_port)
         logging.info("Sent to " + client_ip + "  " + str(client_port))
+        logging.info(self.table_to_string().encode())
         broadcast_socket.sendto(self.table_to_string().encode(), b_addr)
 
     def table_to_string(self):
@@ -65,18 +67,18 @@ class Client(object):
         self.server_ip = server_ip
         self.server_port = server_port
         self.client_port = client_port
-        self.client_table=[]
+        self.client_table = []
 
     def start(self):
-        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.client_socket.settimeout(1.0)
-        self.addr = (self.server_ip, int(self.server_port))
         self.broadcast_thread = threading.Thread(
             group=None,
             target=self.client_table_broadcast_service,
             name="Broadcast Service")
         # starting broadcast thread to recieve client table from server
         self.broadcast_thread.start()
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.client_socket.settimeout(1.0)
+        self.addr = (self.server_ip, int(self.server_port))
         # starting client initial registration
         self.do_registration()
         # to start the thread to receive the table
@@ -86,11 +88,31 @@ class Client(object):
             name="Broadcast Service")
         self.input_thread.start()
 
+    def print_client_table(self):
+        header = "{:^10} {:^20} {:^10} {:^10}".format(
+            'NAME', 'IP', 'PORT', 'STATUS')
+        cprint(header, "red")
+        logging.info(len(self.client_table))
+        for i in  range(len(self.client_table)-1):
+            v=self.client_table[i]
+            line = "{:^10} {:^20} {:^10} {:^10}".format(v[0], v[1], v[2], v[3])
+            cprint(str(line), "red")
+
     def client_actions(self):
         while(1):
-            cprint("Multiple options available\nsend <name> <message>\nlist\ndereg <nick-name>\nexit")
-            choice=input().split(" ")[0]
-            logging.info("Choice is "+choice)        
+            cprint(
+                "Multiple options available\n>>>> send <name> <message>\n>>>> list\n>>>> dereg <nick-name>\n", "red")
+            command = input()
+            choice = command.split(" ")[0]
+            logging.info("Choice is ")
+            logging.info(choice)
+            if(choice == "send"):
+                logging.info("Sending to the client")
+            elif(choice == "list"):
+                logging.info("Listing table")
+                self.print_client_table()
+            elif choice == "dereg":
+                logging.info("Deregging inititate")
 
     def client_table_broadcast_service(self):
         """This method starts another socket on which it receives the update client table
@@ -105,21 +127,28 @@ class Client(object):
             print("[Client table received]\n")
             logging.info("Client table service received at " +
                          self.client_port)
-            self.update_client_table(message)
+            self.update_client_table(message.decode("utf-8"))
 
-    def update_client_table(self,table):
+    def update_client_table(self, table):
+        logging.info("Table string is")
+        logging.info(table)
         # clearing the list
-        self.client_table[:]=[]
-        client_line=table.split("\n")
+        self.client_table[:] = []
+        client_line = table.split("\n")
+        logging.info("Client line is")
+        logging.info(client_line)
+        logging.info("length of data is "+str(len(client_line)))
         for v in client_line:
-            client_data=v.split(" ")
+            client_data = v.split(" ")
+            logging.info("1 client length is "+str(len(client_data)))
             self.client_table.append(client_data)
             logging.info("Table Updated: \n")
             logging.info(self.client_table)
-            
+
     def do_registration(self):
-        reg = self.nick_name + " " + self.client_port + " " + self.server_ip + " " + self.server_port
-        self.client_socket.sendto(reg, self.addr)
+        reg = self.nick_name + " " + self.client_port + \
+            " " + self.server_ip + " " + self.server_port
+        self.client_socket.sendto(reg.encode(), self.addr)
         logging.info("Client reg send")
         data, server = self.client_socket.recvfrom(1024)
         print(str(data))
