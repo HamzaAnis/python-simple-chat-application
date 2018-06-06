@@ -14,11 +14,24 @@ class Server(object):
     """docstring for Server."""
 
     def __init__(self, port):
+        """Constructor of the function
+        
+        Arguments:
+            port {[int]} -- [On which the server will start]
+        """
+
         super(Server, self).__init__()
         self.port = port
         self.client_table = []
 
     def handle_dereg(self, username, address):
+        """this function handles the dereg of client
+        
+        Arguments:
+            username {[string]} -- [The name which has to update]
+            address {[socket]} -- [The socket where response/ ACK needs to be sent]
+        """
+
         logging.info("Deregging received for "+username+"|")
         for i in range(len(self.client_table)):
             v = self.client_table[i]
@@ -31,6 +44,12 @@ class Server(object):
                     "You are Offline. Bye.".encode(), address)
 
     def handle_reg(self, username, address):
+         """this function handles the reg of client
+        
+        Arguments:
+            username {[string]} -- [The name which has to update]
+            address {[socket]} -- [The socket where response/ ACK needs to be sent]
+        """
         logging.info("Regging received for "+username+"|")
         for i in range(len(self.client_table)):
             v = self.client_table[i]
@@ -46,6 +65,16 @@ class Server(object):
                 #     "You are online. Welcome again.".encode(), address)
 
     def check_already_exist(self, username):
+        """Check if the user is already in the table.
+        this helps when a new reg come or new messages come
+        
+        Arguments:
+            username {[string]} -- [The user which needs to be check]
+        
+        Returns:
+            [type] -- [boolen]
+        """
+
         for i in range(len(self.client_table)):
             v = self.client_table[i]
             if(v[0] == username):
@@ -54,6 +83,9 @@ class Server(object):
         return False
 
     def start(self):
+        """This is the starting point of the server
+        """
+
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.server_socket.bind(('', int(self.port)))
         logging.info("Server started")
@@ -106,12 +138,29 @@ class Server(object):
                                           address)
 
     def handle_offline_message(self, filename, message):
+        """When an offline message is reached to server. 
+        This method handles the saving of the messages to the file
+        
+        Arguments:
+            filename {[string]} -- [File name which is same as username]
+            message {[string]} -- [The message needs to be saved]
+        """
+
         logging.info("Apending started")
         with open(filename, "a") as myfile:
             myfile.write(str(datetime.datetime.now())+"  "+message+"\n")
         logging.info("File appended")
 
     def get_file_messages(self,username):
+        """When user regs again. It will get the messages from the file
+        
+        Arguments:
+            username {[string]} -- [file name is same as user name]
+        
+        Returns:
+            [string] -- [file content]
+        """
+
         if(os.path.exists(username)):
             logging.info(username+" exists")
             file=open(username,"r")
@@ -126,6 +175,15 @@ class Server(object):
         
 
     def check_offline_status(self, username):
+        """Check if a user is offline in table
+        
+        Arguments:
+            username {[string]} -- [User to check]
+        
+        Returns:
+            [type] -- [boolean]
+        """
+
         logging.info("Checking status for "+username)
         for v in self.client_table:
             if(v[0] == username):
@@ -134,6 +192,9 @@ class Server(object):
         return False
 
     def client_table_broadcast(self):
+        """This method broadcast the table to all of the clients' broadcasting port
+        """
+
         for v in self.client_table:
             self.send_table_to_client(v[2], int(v[1]))
 
@@ -152,6 +213,12 @@ class Server(object):
         broadcast_socket.sendto(self.table_to_string().encode(), b_addr)
 
     def table_to_string(self):
+        """Converting the list form of the client table to string
+        
+        Returns:
+            [type] -- [string]
+        """
+
         logging.info("Sending table")
         send = "table "
         for v in self.client_table:
@@ -161,7 +228,7 @@ class Server(object):
 
 
 class Client(object):
-    """docstring for Client."""
+    """This class handles the chat functions for the user."""
 
     def __init__(self, nickname, server_ip, server_port, client_port):
         super(Client, self).__init__()
@@ -172,6 +239,9 @@ class Client(object):
         self.client_table = []
 
     def start(self):
+        """This is the starting point for the Client
+        """
+
         self.broadcast_thread = threading.Thread(
             group=None,
             target=self.client_table_broadcast_message_service,
@@ -191,6 +261,9 @@ class Client(object):
         self.input_thread.start()
 
     def print_client_table(self):
+        """Printing the client table on the command of list from the console
+        """
+
         header = "{:^10} {:^20} {:^10} {:^10}".format(
             'NAME', 'IP', 'PORT', 'STATUS')
         cprint(header, "red")
@@ -201,6 +274,9 @@ class Client(object):
             cprint(str(line), "red")
 
     def client_actions(self):
+        """This will run in a thread to take inputs from the user
+        """
+
         while(1):
             cprint(
                 "Multiple options available\n>>>> send <name> <message>\n>>>> list\n>>>> dereg <nick-name> \n>>>>>deregA <any one>\n", "red")
@@ -222,6 +298,12 @@ class Client(object):
                 self.perform_reg(command)
 
     def perform_reg(self, command):
+        """On the reg input after dereg this will process the reg to the server
+        
+        Arguments:
+            command {[str]} -- [The command given e.g reg x]
+        """
+
         logging.info("Regging inititate")
         reg_client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         reg_client_socket.sendto(command.lower().encode(), self.addr)
@@ -230,6 +312,13 @@ class Client(object):
         logging.info("reg again")
 
     def handle_message_sending(self, command):
+        """If user select to send the message, this method will forward the message
+
+        
+        Arguments:
+            command {[str]} -- [The command given for send e.g send x this is good]
+        """
+
         logging.info("Sending message "+command[4:])
         send_name = command.split(" ")[1].lower()
         logging.info("Username is ")
@@ -264,6 +353,16 @@ class Client(object):
 
 
     def save_message_request(self, message):
+        """When there is no response from the client or it is offline
+        then this message saves the messages
+        
+        Arguments:
+            message {[str]} -- [Offline message to be saved on server]
+        
+        Returns:
+            [type] -- [None]
+        """
+
         logging.info("Deregging inititate")
         save_message_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         save_message_socket.settimeout(0.5)
@@ -281,6 +380,16 @@ class Client(object):
         os._exit()
 
     def perform_deregon_all(self, command):
+        """According to buisniness logic. A person can dereg himself but
+        if he wants to dereg somone else this method will proceed it
+        
+        Arguments:
+            command {[str]} -- [The commnand for this e.g deregA x]
+        
+        Returns:
+            [type] -- [None]
+        """
+
         username = command.lower().split(" ")[1]
         logging.info("User is ")
         logging.info(username)
@@ -301,6 +410,15 @@ class Client(object):
             os._exit(1)
 
     def perform_dereg(self, command):
+        """This performs the dereg on a server
+        
+        Arguments:
+            command {[str]} -- [Command e.g dereg x]
+        
+        Returns:
+            [type] -- [description]
+        """
+
         username = command.lower().split(" ")[1]
         logging.info("User is ")
         logging.info(username)
@@ -326,7 +444,8 @@ class Client(object):
             cprint("You can not de-register someone else.\n", "red")
 
     def client_table_broadcast_message_service(self):
-        """This method starts another socket on which it receives the update client table. Also it handles the messages
+        """This method starts another socket on which it receives the updated client table and
+        receive messages it will distinguish and handle it later
         """
 
         logging.info(
@@ -361,6 +480,14 @@ class Client(object):
                 logging.info(detail)
 
     def update_client_table(self, table):
+        """ON receiving the table from the server.
+        This method will convert the string response of 
+        the tabel from server to the list
+        
+        Arguments:
+            table {[string]} -- [response from server on update table]
+        """
+
         logging.info("Table string is")
         logging.info(table)
         # clearing the list
@@ -377,6 +504,10 @@ class Client(object):
             logging.info(self.client_table)
 
     def do_registration(self):
+        """When the program first starts it handles
+        theinformation sharing between client and server
+        """
+
         reg = self.nick_name + " " + self.client_port + \
             " " + self.server_ip + " " + self.server_port
         self.client_socket.sendto(reg.encode(), self.addr)
@@ -394,6 +525,17 @@ class UdpChat(object):
 
     def __init__(self, mode, port, nick_name, server_ip, server_port,
                  client_port):
+        """__init__
+        
+        Arguments:
+            mode {[str]} -- [-c or -s]
+            port {[str]} -- ["Server port"]
+            nick_name {[str]} -- [User name]
+            server_ip {[str]} -- [server ip]
+            server_port {[str]} -- [Port on which the server will be running]
+            client_port {[str]} -- [Client of port on which it will receive messages and udpated tables]
+        """
+
         super(UdpChat, self).__init__()
         logging.info("Mode " + mode)
         logging.info("Sever port" + str(port))
@@ -412,6 +554,9 @@ class UdpChat(object):
 
 
 if __name__ == "__main__":
+    """starting point of the table
+    """
+
     fileConfig('log.conf')
     logger = logging.getLogger()
     logging.info(len(sys.argv))
