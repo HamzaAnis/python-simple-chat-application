@@ -71,3 +71,34 @@ $ python UdpChat.py -c Y 127.0.0.1 1444 2001
 $ python UdpChat.py -c Z 127.0.0.1 1444 2002
 ```
 and so on.
+
+## Working
+There are multiple options for the client
+```
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>>>deregA <any one>
+>>>>exit
+```
+  - list
+  
+  Displays the details for the client that are registered on the server and theie status
+
+  - send <name_of_receiver>
+  
+  This sends the message to another user 
+  
+  - dereg <yourname>
+  
+  This makes only yourself dereg/offline on the server
+  
+  - deregA <any_one_else>
+  
+  This command helps you derestering anyone in the server
+  
+  - reg <yourname>
+  
+  This command make you online/reg on the server again after being online.
