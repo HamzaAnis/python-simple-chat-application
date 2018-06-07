@@ -121,3 +121,6 @@ level=DEBUG
 handlers=stream_handler, file 
 ```
 By doing this you can see all the messages that are generated between the servers and clients.
+
+
+The test runs are the `test`
