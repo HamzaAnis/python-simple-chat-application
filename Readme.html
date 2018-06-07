@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1 id="simplechatapplication">Simple Chat Application</h1>
+
+    <p>A python application using UDP sockets and consist of one server and clients.</p>
+
+    <h2 id="dependencies">Dependencies</h2>
+
+    <p>termcolor </p>
+
+    <pre><code class="  language- ">
+        $ pip install termcolor
+        </code></pre>
+
+    <p>Python 3</p>
+
+    <pre><code>
+        $ python --version
+        Python 3.6.5
+        </code></pre>
+
+    <h3 id="feautures">Feautures</h3>
+
+    <ul>
+        <li>
+            <p>Realtime chat </p>
+        </li>
+
+        <li>
+            <p>Offline Chat</p>
+        </li>
+
+        <li>
+            <p>Registering to Server</p>
+        </li>
+
+        <li>
+            <p>Deregistering yourslef on Server</p>
+        </li>
+
+        <li>
+            <p>Deregistering anyone on the Server</p>
+        </li>
+
+        <li>
+            <p>Listing the client's table that is maintaines by server</p>
+        </li>
+
+        <li>
+            <p>Notification's for the message received</p>
+        </li>
+
+        <li>
+            <p>Handling the chat when server is down</p>
+        </li>
+
+        <li>
+            <p>Handling chat when the client is down</p>
+        </li>
+    </ul>
+
+    <h2 id="howtostart">How to start</h2>
+
+    <p>The project consist of two parts. Server and Client.</p>
+
+    <p>First go the directory containg the python main file
+        <code>UdpChat.py</code> and logging configuration file
+        <code>log.conf</code>
+    </p>
+
+    <pre><code>
+        $ cd UdpChat
+        </code></pre>
+
+    <h4 id="server">Server</h4>
+
+    <p>To start the server it has folowing format for the arguments passed to it. Start the server before than the clients</p>
+
+    <pre><code
+        >$ python UdpChat.py -s {port}
+        </code></pre>
+
+    <p>e.g I want to start the server on 1444 then</p>
+
+    <pre><code>
+        $ python UdpChat.py -s 1444
+        </code></pre>
+
+    <h4 id="client">Client</h4>
+
+    <p>To start the client it has following format for the arguments passed to it.</p>
+
+    <pre><code>
+        $ python UdpChat.py -c {nick_name} {Server_IP} {Server_port} {Client_port}
+        </code></pre>
+
+    <p>e.g I want to start a client with a name test. The server IP will be
+        <code>127.0.01</code> as it is running localhost in this case. The server
+        <em>port will be the same on which the server is started. The client</em>port will be different for each client</p>
+
+    <h5 id="client1">Client 1</h5>
+
+    <pre><code>
+        $ python UdpChat.py -c X 127.0.0.1 1444 2000
+        </code></pre>
+
+    <h5 id="client2">Client 2</h5>
+
+    <pre><code>
+        $ python UdpChat.py -c Y 127.0.0.1 1444 2001
+        </code></pre>
+
+    <h5 id="client3">Client 3</h5>
+
+    <pre><code>
+        $ python UdpChat.py -c Z 127.0.0.1 1444 2002
+        </code></pre>
+
+    <p>and so on.</p>
+
+    <h2 id="working">Working</h2>
+
+    <p>There are multiple options for the client</p>
+
+    <pre><code>
+        Multiple options available
+        &gt;&gt;&gt;&gt; send &lt;name&gt; &lt;message&gt;
+        &gt;&gt;&gt;&gt; list
+        &gt;&gt;&gt;&gt; reg &lt;nick-name&gt;
+        &gt;&gt;&gt;&gt; dereg &lt;nick-name&gt;
+        &gt;&gt;&gt;&gt;&gt;deregA &lt;any one&gt;
+        &gt;&gt;&gt;&gt;exit
+        </code></pre>
+
+    <ul>
+        <li>
+            <p>list</p>
+
+            <p>Displays the details for the client that are registered on the server and theie status</p>
+        </li>
+
+        <li>
+            <p>send
+                <name_of_receiver>
+            </p>
+
+            <p>This sends the message to another user </p>
+        </li>
+
+        <li>
+            <p>dereg
+                <yourname>
+            </p>
+
+            <p>This makes only yourself dereg/offline on the server</p>
+        </li>
+
+        <li>
+            <p>deregA
+                <any_one_else>
+            </p>
+
+            <p>This command helps you derestering anyone in the server</p>
+        </li>
+
+        <li>
+            <p>reg
+                <yourname>
+            </p>
+
+            <p>This command make you online/reg on the server again after being online.</p>
+        </li>
+    </ul>
+
+    <h2 id="logging">Logging</h2>
+
+    <p>The logging for the program is diabled by default. If you want to enable it then go to the
+        <code>log.conf</code> file and change this handleer at Line 10 from</p>
+
+    <pre><code>
+        [logger_root]
+        level=WARNING
+        handlers=stream_handler, file 
+        </code></pre>
+
+    <p>to</p>
+
+    <pre><code>
+        [logger_root]
+        level=DEBUG
+        handlers=stream_handler, file 
+        </code></pre>
+
+    <p>By doing this you can see all the messages that are generated between the servers and clients.</p>
+</body>
+
+</html>
