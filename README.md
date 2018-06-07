@@ -20,9 +20,11 @@ Python 3.6.5
 
   - Registering to Server
 
-  - Deregistering to Server
+  - Deregistering yourslef on Server
+  
+  - Deregistering anyone on the Server
 
-  - Listing the client's table
+  - Listing the client's table that is maintaines by server
   
   - Notification's for the message received
   
@@ -102,3 +104,20 @@ Multiple options available
   - reg <yourname>
   
   This command make you online/reg on the server again after being online.
+
+## Logging
+
+The logging for the program is diabled by default. If you want to enable it then go to the `log.conf file` and change this handleer at Line 10 from
+
+```
+[logger_root]
+level=WARNING
+handlers=stream_handler, file 
+```
+to
+```
+[logger_root]
+level=DEBUG
+handlers=stream_handler, file 
+```
+By doing this you can see all the messages that are generated between the servers and clients.
