@@ -1,0 +1,108 @@
+root@HpEnvy:/mnt/g/python-simple-chat-application/UdpChat#
+python3 UdpChat.py -c X 127.0.0.1 1024
+5555
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555      ONLINE
+ yd222asd       127.0.0.1          4007      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555      ONLINE
+ yd222asd       127.0.0.1          4007      ONLINE
+  z1212         127.0.0.1          5004      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+send yd222asd How are you?
+[Message received by yd222asd]
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+yd222asd: I am fine.
+z1212: You there?
+send z1212 Yes
+[Message received by z1212]
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+dereg x
+[Client table received]
+
+You are Offline. Bye.
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+reg x
+[Client table received]
+
+2018-06-08 03:55:30.163894  yd222asd: Sending you offline messages.
+
+2018-06-08 03:55:51.496557  z1212: Sendig offline message
+
+
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+exit
+[Client table received]
+
+You are Offline. Bye.
+root@HpEnvy:/mnt/g/python-simple-chat-application/UdpChat#

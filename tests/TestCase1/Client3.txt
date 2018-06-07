@@ -1,0 +1,109 @@
+root@HpEnvy:/mnt/g/python-simple-chat-application/UdpChat# python3 UdpChat.py -c Z1212 127.0.0.1 1024 5004
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555      ONLINE
+ yd222asd       127.0.0.1          4007      ONLINE
+  z1212         127.0.0.1          5004      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+yd222asd: How are you?
+send yd222asd Fine.
+[Message received by yd222asd]
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+send x You there?
+[Message received by x]
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+x: Yes
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555     OFFLINE
+ yd222asd       127.0.0.1          4007      ONLINE
+  z1212         127.0.0.1          5004      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+send x Sendig offline message
+Message received by the server and saved
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555      ONLINE
+ yd222asd       127.0.0.1          4007      ONLINE
+  z1212         127.0.0.1          5004      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+[Client table received]
+
+[Client table received]
+
+list
+   NAME             IP             POR    IP
+   PORT      STA127.0.0.1          555TUS
+    x           127.0.0.1          400127.0.0.1
+   5555     OFFL127.0.0.1          500INE
+ yd222asd        available
+127.0.0.1        <message>
+   4007     OFFLINE             ame>
+  z1212         -name>
+127.0.0.1        one>
+   5004      ONLINE
+Multiple options available
+>>>> send <name> <message>>>>> list
+>>>> reg <nick-name>>>>> dereg <nick-name>>>>> deregA <any one>
+>>>> exit
+exit[Client table received]
+
+You are Offline. Bye.
+root@HpEnvy:/mnt/g/python-simple-chat-application/UdpChat#

@@ -1,0 +1,242 @@
+root@HpEnvy:/mnt/g/python-simple-chat-application/UdpChat# python3 UdpChat.py -c Yd222asd 127.0.0.1 1024 4007
+Multiple options available
+>>>> send <name> <message>
+>>>> listpython3 UdpChat.py -c Yd222asd 127.0.0.1 1024 4006
+root@HpEnvy:/mnt/g/python-simple-chat-application/UdpChat#
+python3 UdpChat.py -c Yd222asd 127.0.0.1 1024 4007
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+[Client table received]
+
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555      ONLINE
+ yd222asd       127.0.0.1          4007      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555      ONLINE
+ yd222asd       127.0.0.1          4007      ONLINE
+  z1212         127.0.0.1          5004      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+x: How are you?
+send x I am fine.
+[Message received by x]
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+send z1212 How are you?
+[Message received by z1212]
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+z1212: Fine.
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555     OFFLINE
+ yd222asd       127.0.0.1          4007      ONLINE
+  z1212         127.0.0.1          5004      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+send x Sending you offline messages.
+Message received by the server and saved
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555      ONLINE
+ yd222asd       127.0.0.1          4007      ONLINE
+  z1212         127.0.0.1          5004      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555     OFFLINE
+ yd222asd       127.0.0.1          4007      ONLINE
+  z1212         127.0.0.1          5004      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+exit
+[Client table received]
+
+You are Offline. Bye.
+root@HpEnvy:/mnt/g/python-simple-chat-application/UdpChat#
+
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+[Client table received]
+
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555      ONLINE
+ yd222asd       127.0.0.1          4007      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555      ONLINE
+ yd222asd       127.0.0.1          4007      ONLINE
+  z1212         127.0.0.1          5004      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+x: How are you?
+send x I am fine.
+[Message received by x]
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+send z1212 How are you?
+[Message received by z1212]
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+z1212: Fine.
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555     OFFLINE
+ yd222asd       127.0.0.1          4007      ONLINE
+  z1212         127.0.0.1          5004      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+send x Sending you offline messages.
+Message received by the server and saved
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555      ONLINE
+ yd222asd       127.0.0.1          4007      ONLINE
+  z1212         127.0.0.1          5004      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555     OFFLINE
+ yd222asd       127.0.0.1          4007      ONLINE
+  z1212         127.0.0.1          5004      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+exit
+[Client table received]
+
+You are Offline. Bye.
+root@HpEnvy:/mnt/g/python-simple-chat-application/UdpChat#

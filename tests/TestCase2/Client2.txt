@@ -1,0 +1,28 @@
+root@HpEnvy:/mnt/g/python-simple-chat-application/UdpChat#
+python3 UdpChat.py -c Y 127.0.0.1 1024
+4007
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+[Client table received]
+
+dereg y
+[Client table received]
+
+You are Offline. Bye.
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+exit
+[Server not responding]
+[Exiting]

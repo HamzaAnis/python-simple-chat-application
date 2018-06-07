@@ -1,0 +1,44 @@
+root@HpEnvy:/mnt/g/python-simple-chat-application/UdpChat#
+python3 UdpChat.py -c X 127.0.0.1 1024
+5555
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+[Client table received]
+
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555      ONLINE
+    y           127.0.0.1          4007      ONLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+[Client table received]
+
+list
+   NAME             IP             PORT      STATUS
+    x           127.0.0.1          5555      ONLINE
+    y           127.0.0.1          4007     OFFLINE
+Multiple options available
+>>>> send <name> <message>
+>>>> list
+>>>> reg <nick-name>
+>>>> dereg <nick-name>
+>>>> deregA <any one>
+>>>> exit
+
+send y "You are offline as well as server so this must be a fail send"
+[Server not responding]
+[Exiting]
