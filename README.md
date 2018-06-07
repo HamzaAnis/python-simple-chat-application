@@ -107,7 +107,7 @@ Multiple options available
 
 ## Logging
 
-The logging for the program is diabled by default. If you want to enable it then go to the `log.conf file` and change this handleer at Line 10 from
+The logging for the program is diabled by default. If you want to enable it then go to the `log.conf` file and change this handleer at Line 10 from
 
 ```
 [logger_root]
