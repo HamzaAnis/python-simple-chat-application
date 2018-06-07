@@ -279,7 +279,7 @@ class Client(object):
 
         while (1):
             cprint(
-                "Multiple options available\n>>>> send <name> <message>\n>>>> list\n reg <nick-name>\n>>>> dereg <nick-name> \n>>>>>deregA <any one>\n>>>>exit\n",
+                "Multiple options available\n>>>> send <name> <message>\n>>>> list\n>>>> reg <nick-name>\n>>>> dereg <nick-name> \n>>>> deregA <any one>\n>>>> exit\n",
                 "red")
             command = input()
             choice = command.split(" ")[0]
