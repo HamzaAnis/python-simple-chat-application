@@ -386,7 +386,7 @@ class Client(object):
                 logging.info("ACK not received on saving offline message")
                 retry = retry + 1
         cprint("[Server not responding]\n[Exiting]", "red")
-        os._exit()
+        os._exit(1)
 
     def perform_deregon_all(self, command):
         """According to buisniness logic. A person can dereg himself but
