@@ -44,13 +44,14 @@ class Server(object):
                     "You are Offline. Bye.".encode(), address)
 
     def handle_reg(self, username, address):
-         """this function handles the reg of client
+        """this function handles the reg of client
         
         Arguments:
             username {[string]} -- [The name which has to update]
             address {[socket]} -- [The socket where response/ ACK needs to be sent]
         """
-        logging.info("Regging received for "+username+"|")
+        
+        logging.info("Regging received for "+username)
         for i in range(len(self.client_table)):
             v = self.client_table[i]
             if(v[0] == username):
